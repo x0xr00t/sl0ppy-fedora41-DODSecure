@@ -1,7 +1,10 @@
 #!/bin/bash
-
+#
+# Author: p.hoogeveen
+# AKA   : x0xr00t
+# Build : 21032025
 # DoD Security Package Installer for Fedora
-# Author: PAOCIA | Cyber Warfare
+
 
 set -e  # Exit on error
 LOGFILE="/var/log/dod_install.log"
