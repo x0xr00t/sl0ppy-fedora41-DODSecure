@@ -1,7 +1,11 @@
 #!/bin/bash
-
+#
+# Author: p.hoogeveen
+# AKA   : x0xr00t
+# Build : 21032025
+#
 # DoD-Standard Security Hardening Script for Fedora
-# Author: PAOCIA | Red Team Cyber Warfare
+
 
 set -e  # Exit on error
 LOGFILE="/var/log/dod_hardening.log"
