@@ -63,7 +63,17 @@ sudo systemctl restart sshd
 ### 7️⃣ Enable Auditd (Advanced Logging)
 echo "[+] Enabling audit logging..."
 sudo systemctl enable --now auditd
-sudo bash -c 'echo "-a always,exit -F arch=b64 -S execve -k exec_logging" > /etc/audit/rules.d/audit.rules'
+
+# Fix for "error sending add rule data request rule exist" in audit.rules
+echo "[+] Fixing audit.rules..."
+sudo bash -c 'cat << EOF > /etc/audit/rules.d/audit.rules
+%YAML 1.1
+---
+# DoD Audit Rules for Command Execution
+-a always,exit -F arch=b64 -S execve -k exec_logging
+-a always,exit -F arch=b32 -S execve -k exec_logging
+EOF'
+
 sudo auditctl -R /etc/audit/rules.d/audit.rules
 
 ### 8️⃣ Secure Chrony (Prevent NTP Poisoning)
