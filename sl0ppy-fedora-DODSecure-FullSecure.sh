@@ -6,7 +6,6 @@
 #
 # DoD-Standard Security Hardening Script for Fedora
 
-
 set -e  # Exit on error
 LOGFILE="/var/log/dod_hardening.log"
 exec > >(tee -a "$LOGFILE") 2>&1
@@ -93,6 +92,21 @@ echo "[+] Configuring Suricata & YARA for advanced threat detection..."
 sudo suricata-update add-source et/open https://rules.emergingthreats.net/open/suricata-5.0.0/emerging.rules.tar.gz
 sudo suricata-update add-source abuse.ch https://feodotracker.abuse.ch/blocklist/?download=suricata
 sudo suricata-update
+
+# **Fix for "error sending ass ruledata request rule exit write"**
+echo "[+] Fixing Suricata rule update issue..."
+
+# Check if rule data is correctly initialized
+if ! sudo suricata-update --check; then
+    echo "[!] Issue detected with Suricata rule updates. Attempting to fix..."
+    sudo rm -rf /etc/suricata/rules/*
+    sudo suricata-update
+    sudo systemctl restart suricata
+    echo "[+] Suricata rule update issue fixed!"
+else
+    echo "[+] Suricata rules are up to date!"
+fi
+
 sudo systemctl restart suricata
 
 ### 1️⃣2️⃣ Install & Configure Fail2Ban (Auto-Ban Attackers)
