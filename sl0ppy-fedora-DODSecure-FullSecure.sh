@@ -5,17 +5,15 @@
 # Build : 21032025
 #
 # DoD-Standard Security Hardening Script for Fedora
-
 set -e  # Exit on error
 LOGFILE="/var/log/dod_hardening.log"
 exec > >(tee -a "$LOGFILE") 2>&1
 
 echo -e "\n[+] 🚀 DoD Security Hardening for Fedora Starting...\n"
 
-### 1️⃣ Update System & Install Security Packages
-#echo "[+] Updating system & installing security tools..."
+### 1️⃣ Update System
+#echo "[+] Updating system..."
 #sudo dnf update -y
-#sudo dnf install -y epel-release suricata suricata-update fail2ban firewalld nano curl wget nmap policycoreutils-python-utils aide audit openscap-scanner chrony dnscrypt-proxy
 
 ### 2️⃣ Kernel & Memory Hardening
 echo "[+] Applying kernel-level security settings..."
@@ -107,13 +105,18 @@ else
     echo "[+] Suricata rules are up to date!"
 fi
 
+# Restart Suricata to ensure proper rule loading
 sudo systemctl restart suricata
 
 ### 1️⃣2️⃣ Install & Configure Fail2Ban (Auto-Ban Attackers)
 echo "[+] Installing Fail2Ban..."
 sudo systemctl enable --now fail2ban
 echo "[+] Configuring Fail2Ban rules..."
-sudo bash -c 'cat << EOF > /etc/fail2ban/jail.local
+
+# Fail2Ban configuration for Suricata logs
+echo "%YAML 1.1" | sudo tee /etc/fail2ban/jail.local
+echo "---" | sudo tee -a /etc/fail2ban/jail.local
+sudo bash -c 'cat << EOF >> /etc/fail2ban/jail.local
 [suricata]
 enabled = true
 filter = suricata
@@ -121,6 +124,8 @@ logpath = /var/log/suricata/fast.log
 maxretry = 2
 bantime = 3600
 EOF'
+
+# Restart Fail2Ban to apply new configurations
 sudo systemctl restart fail2ban
 
 ### ✅ Final System Checks
