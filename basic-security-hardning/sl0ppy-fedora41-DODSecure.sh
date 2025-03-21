@@ -1,7 +1,10 @@
 #!/bin/bash
-
+#
+# Author: p.hoogeveen
+# AKA   : x0xr00t
+# Build : 21032025
 # DoD-Level Security Automation for Fedora
-# Author: PAOCIA | Cyber Warfare Edition
+
 
 set -e  # Exit on error
 LOGFILE="/var/log/secure_fedora.log"
